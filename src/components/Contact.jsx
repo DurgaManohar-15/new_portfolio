@@ -11,7 +11,7 @@ import {
 import { motion } from "framer-motion";
 import emailjs from "@emailjs/browser";
 
-const OWNER_EMAIL = "durgamanoharmallelli@gmail.com";
+const OWNER_EMAIL = "durgamanohat@gmail.com";
 
 const Contact = () => {
   const formRef = useRef();
