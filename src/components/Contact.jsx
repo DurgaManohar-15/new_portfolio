@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import RoomIcon from "@mui/icons-material/Room";
+import PhoneIcon from "@mui/icons-material/Phone";
 import { motion } from "framer-motion";
 import emailjs from "@emailjs/browser";
 
@@ -51,10 +52,16 @@ const CONTACT_INFO = [
     values: [OWNER_EMAIL],
   },
   {
+    id: "phone",
+    label: "Phone",
+    icon: <PhoneIcon />,
+    values: ["+91-8328291394"],
+  },
+  {
     id: "location",
     label: "Location",
     icon: <RoomIcon />,
-    values: ["Hyderabad / Bengaluru, India"],
+    values: ["Hyderabad, Telangana, India"],
   },
 ];
 
@@ -234,7 +241,7 @@ const Contact = () => {
         sx={{
           mt: 2,
           display: "grid",
-          gridTemplateColumns: { xs: "1fr", md: "1.15fr 0.85fr" },
+          gridTemplateColumns: { xs: "1fr", md: "0.9fr 1.1fr" },
           gridTemplateRows: { xs: "auto auto auto", md: "1fr auto" },
           gap: { xs: 2, md: 2.5 },
           minHeight: { xs: "auto", md: 540 },
@@ -674,7 +681,7 @@ const Contact = () => {
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns: { xs: "1fr", sm: "1.8fr 1fr" },
+                gridTemplateColumns: { xs: "1fr", sm: "1.3fr 0.7fr" },
                 gap: { xs: 2, sm: 2 },
                 height: "100%",
                 alignContent: "center",
@@ -690,6 +697,8 @@ const Contact = () => {
                     gridColumn: item.id === "location" ? { xs: "span 1", sm: "span 2" } : "span 1",
                     pt: item.id === "location" ? { xs: 2, sm: 2 } : 0,
                     borderTop: item.id === "location" ? `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}` : "none",
+                    borderLeft: item.id === "phone" ? { xs: "none", sm: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}` } : "none",
+                    pl: item.id === "phone" ? { xs: 0, sm: 3 } : 0,
                   }}
                 >
                   <Box
