@@ -1,213 +1,157 @@
-import React from "react";
-import {
-  Box,
-  Typography,
-  Paper,
-  LinearProgress,
-  useTheme,
-} from "@mui/material";
+import React, { useRef, useState, memo } from "react";
+import { Box, Typography, Paper, Tooltip } from "@mui/material";
+import CodeIcon from "@mui/icons-material/Code";
 import { motion } from "framer-motion";
-import {
-  FaHtml5,
-  FaCss3Alt,
-  FaJsSquare,
-  FaReact,
-  FaGithub,
-  FaPython,
-  FaJava,
-} from "react-icons/fa";
-import { SiMysql } from "react-icons/si";
+import { SkillCoinView, SkillsGlobalCanvas } from "./SkillChip";
+
+const MotionSection = motion.create("section");
+
+// Bulk-import SVG files as resolved URLs at build time
+const svgModules = import.meta.glob("../assets/Tech Stack Assets/*.svg", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const getSvgUrl = (filename) =>
+  svgModules[`../assets/Tech Stack Assets/${filename}`];
 
 const skills = [
-  {
-    name: "Python",
-    icon: <FaPython size="1.5em" />,
-    color: "#3776AB",
-    percentage: 50,
-  },
-  {
-    name: "Java",
-    icon: <FaJava size="1.5em" />,
-    color: "#007396",
-    percentage: 75,
-  },
-  {
-    name: "HTML",
-    icon: <FaHtml5 size="1.5em" />,
-    color: "#E34F26",
-    percentage: 90,
-  },
-  {
-    name: "CSS",
-    icon: <FaCss3Alt size="1.5em" />,
-    color: "#1572B6",
-    percentage: 70,
-  },
-  {
-    name: "JavaScript",
-    icon: <FaJsSquare size="1.5em" />,
-    color: "#F7DF1E",
-    percentage: 70,
-  },
-  {
-    name: "React",
-    icon: <FaReact size="1.5em" />,
-    color: "#61DAFB",
-    percentage: 70,
-  },
-  {
-    name: "MySQL",
-    icon: <SiMysql size="1.5em" />,
-    color: "#4479A1",
-    percentage: 75,
-  },
-  {
-    name: "Git",
-    icon: <FaGithub size="1.5em" />,
-    color: "#181717",
-    percentage: 60,
-  },
+  { name: "Python", svg: "python-programming-language-icon.svg" },
+  { name: "Java", svg: "java-programming-language-icon.svg" },
+  { name: "HTML5", svg: "html-icon.svg" },
+  { name: "CSS3", svg: "css-icon.svg" },
+  { name: "JavaScript", svg: "javascript-programming-language-icon.svg" },
+  { name: "ReactJS", svg: "react-js-icon.svg" },
+  { name: "MySQL", svg: "mysql-icon.svg" },
+  { name: "Git", svg: "git-icon.svg" },
 ];
 
-const Skills = () => {
-  const theme = useTheme();
+const CoinTile = memo(({ skill, idx }) => {
+  const trackRef = useRef();
+  const [isHovered, setIsHovered] = useState(false);
+  const [pointer, setPointer] = useState({ x: 0, y: 0 });
+  const svgUrl = getSvgUrl(skill.svg);
+
+  const handleMove = (event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
+    setPointer({ x, y });
+  };
 
   return (
-    <Paper
-      component={motion.section}
-      elevation={0}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      sx={{ p: 4, my: 4, background: "transparent", border: "none" }}
-    >
+    <Tooltip title={skill.name} placement="top" arrow>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.7 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
+        role="img"
+        aria-label={skill.name}
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.5, delay: idx * 0.05 }}
+        whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
+        style={{ display: "flex", justifyContent: "center" }}
       >
-        <Typography variant="h2" component="h2" gutterBottom align="center">
-          Technical Skills
-        </Typography>
-        <Typography variant="body1" align="center" sx={{ opacity: 0.8, mb: 4 }}>
-          My proficiency levels in various technologies
-        </Typography>
+        <Box
+          ref={trackRef}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => {
+            setIsHovered(false);
+            setPointer({ x: 0, y: 0 });
+          }}
+          onMouseMove={handleMove}
+          sx={{
+            width: { xs: 90, sm: 120 },
+            height: { xs: 90, sm: 120 },
+            borderRadius: "50%",
+            background: "var(--coin-bg)",
+            border: "1px solid var(--coin-border)",
+            transition: "background 0.3s ease-in-out, border-color 0.3s ease-in-out",
+            position: "relative",
+            cursor: "grab",
+            "&:active": { cursor: "grabbing" },
+          }}
+        >
+          {svgUrl && (
+            <SkillCoinView
+              trackRef={trackRef}
+              svgUrl={svgUrl}
+              interactive={isHovered}
+              pointer={pointer}
+            />
+          )}
+        </Box>
       </motion.div>
+    </Tooltip>
+  );
+});
+
+const Skills = memo(() => {
+  return (
+    <Paper
+      component={MotionSection}
+      elevation={0}
+      sx={{
+        p: { xs: 2, md: 4 },
+        my: 4,
+        background: "transparent",
+        border: "none",
+        position: "relative",
+        overflow: "visible",
+      }}
+    >
+      <CodeIcon
+        sx={{
+          position: "absolute",
+          right: -40,
+          top: -40,
+          fontSize: 250,
+          opacity: 0.03,
+          transform: "rotate(-15deg)",
+          zIndex: 0,
+        }}
+      />
+
+      <Typography
+        variant="h2"
+        component="h2"
+        gutterBottom
+        align="center"
+        sx={{ mb: 8, fontWeight: "bold" }}
+      >
+        Technical Skills
+      </Typography>
+
+      <SkillsGlobalCanvas />
 
       <Box
         sx={{
-          maxWidth: 800,
-          mx: "auto",
           display: "flex",
-          flexDirection: "column",
-          gap: 3,
+          flexWrap: "wrap",
+          gap: { xs: 2, sm: 4 },
+          justifyContent: "center",
+          position: "relative",
+          zIndex: 2,
         }}
       >
         {skills.map((skill, idx) => (
-          <motion.div
+          <Box
             key={skill.name}
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, amount: 0.5 }}
-            transition={{ duration: 0.5, delay: idx * 0.1 }}
+            sx={{
+              width: {
+                xs: `calc(100% / 3 - 16px)`,
+                sm: `calc(100% / 4 - 20px)`,
+                md: `calc(100% / 4 - 24px)`,
+              },
+              display: "flex",
+              justifyContent: "center",
+            }}
           >
-            <Paper
-              elevation={2}
-              sx={{
-                p: 3,
-                borderRadius: 2,
-                background: (theme) =>
-                  theme.palette.mode === "light"
-                    ? "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7))"
-                    : "linear-gradient(135deg, rgba(19,32,64,0.9), rgba(19,32,64,0.7))",
-                border: "1px solid",
-                borderColor: (theme) =>
-                  theme.palette.mode === "light" ? "#a5f3fc" : "#22304a",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  mb: 2,
-                }}
-              >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                  <Box
-                    sx={{
-                      color: skill.color,
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    {skill.icon}
-                  </Box>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      fontWeight: 600,
-                      color: theme.palette.text.primary,
-                    }}
-                  >
-                    {skill.name}
-                  </Typography>
-                </Box>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    fontWeight: 700,
-                    color: skill.color,
-                    fontSize: "1.1rem",
-                  }}
-                >
-                  {skill.percentage}%
-                </Typography>
-              </Box>
-              <Box sx={{ position: "relative" }}>
-                <LinearProgress
-                  variant="determinate"
-                  value={skill.percentage}
-                  sx={{
-                    height: 12,
-                    borderRadius: 6,
-                    backgroundColor: (theme) =>
-                      theme.palette.mode === "light" ? "#e2e8f0" : "#334155",
-                    "& .MuiLinearProgress-bar": {
-                      borderRadius: 6,
-                      background: `linear-gradient(90deg, ${skill.color}, ${skill.color}CC)`,
-                      boxShadow: `0 2px 8px ${skill.color}40`,
-                    },
-                  }}
-                />
-                <motion.div
-                  initial={{ width: 0 }}
-                  whileInView={{ width: `${skill.percentage}%` }}
-                  viewport={{ once: false, amount: 0.5 }}
-                  transition={{
-                    duration: 1.5,
-                    delay: idx * 0.1 + 0.3,
-                    ease: "easeOut",
-                  }}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    height: "100%",
-                    background: `linear-gradient(90deg, ${skill.color}, ${skill.color}CC)`,
-                    borderRadius: 6,
-                    boxShadow: `0 2px 8px ${skill.color}40`,
-                  }}
-                />
-              </Box>
-            </Paper>
-          </motion.div>
+            <CoinTile skill={skill} idx={idx} />
+          </Box>
         ))}
       </Box>
     </Paper>
   );
-};
+});
 
 export default Skills;
