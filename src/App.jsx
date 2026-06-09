@@ -10,7 +10,6 @@ import "./App.css";
 
 // Lazy loaded components for improved initial load times and loading states
 const Skills = lazy(() => import("./components/Skills"));
-const Experience = lazy(() => import("./components/Experience"));
 const Projects = lazy(() => import("./components/Projects"));
 const Certifications = lazy(() => import("./components/Certifications"));
 const Contact = lazy(() => import("./components/Contact"));
@@ -195,11 +194,6 @@ function App() {
           <div id="skills">
             <LazyRender fallback={<SectionSkeleton />}>
               <Skills />
-            </LazyRender>
-          </div>
-          <div id="experience">
-            <LazyRender fallback={<SectionSkeleton />}>
-              <Experience />
             </LazyRender>
           </div>
           <div id="projects">

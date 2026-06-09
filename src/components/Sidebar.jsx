@@ -18,7 +18,6 @@ const drawerWidth = 96;
 const sections = [
   { id: "hero", text: "Home", icon: <Home /> },
   { id: "skills", text: "Skills", icon: <Code /> },
-  { id: "experience", text: "Experience", icon: <Work /> },
   { id: "projects", text: "Projects", icon: <BusinessCenter /> },
   { id: "certifications", text: "Certifications", icon: <Star /> },
   { id: "contact", text: "Contact", icon: <Mail /> },

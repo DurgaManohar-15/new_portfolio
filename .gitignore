@@ -37,6 +37,9 @@ pnpm-lock.yaml
 # coverage
 coverage/
 
+# netlify
+.netlify/
+
 # Optional: ignore certificates and pdfs in assets (uncomment if needed)
 # portfolio/src/assets/certificates/*.pdf
 # portfolio/src/assets/certificates/*.jpg 
