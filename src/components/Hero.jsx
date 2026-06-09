@@ -7,7 +7,8 @@ import {
   IconButton,
   useTheme,
 } from "@mui/material";
-import { GitHub, LinkedIn } from "@mui/icons-material";
+import GitHub from "@mui/icons-material/GitHub";
+import LinkedIn from "@mui/icons-material/LinkedIn";
 import { SiLeetcode } from "react-icons/si";
 import { MdDownload } from "react-icons/md";
 import { LuMessageSquareText } from "react-icons/lu";

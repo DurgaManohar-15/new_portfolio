@@ -1,24 +1,80 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef, lazy, Suspense } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
+import Skeleton from "@mui/material/Skeleton";
 import Sidebar from "./components/Sidebar";
 import Hero from "./components/Hero";
-import Skills from "./components/Skills";
-import Projects from "./components/Projects";
-import Certifications from "./components/Certifications";
-import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import "./App.css";
+
+// Lazy loaded components for improved initial load times and loading states
+const Skills = lazy(() => import("./components/Skills"));
+const Experience = lazy(() => import("./components/Experience"));
+const Projects = lazy(() => import("./components/Projects"));
+const Certifications = lazy(() => import("./components/Certifications"));
+const Contact = lazy(() => import("./components/Contact"));
+
+const SectionSkeleton = () => (
+  <Box sx={{ width: "100%", p: { xs: 2, sm: 4 }, my: 4 }}>
+    <Skeleton
+      variant="text"
+      width="40%"
+      height={60}
+      sx={{ mx: "auto", mb: 4, borderRadius: 2 }}
+    />
+    <Skeleton
+      variant="rectangular"
+      width="100%"
+      height={320}
+      sx={{ borderRadius: 4 }}
+    />
+  </Box>
+);
+
+const LazyRender = ({ children, fallback }) => {
+  const [inView, setInView] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "150px" } // Pre-render before it enters viewport
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} style={{ minHeight: "150px", width: "100%" }}>
+      {inView ? (
+        <Suspense fallback={fallback}>
+          {children}
+        </Suspense>
+      ) : (
+        fallback
+      )}
+    </div>
+  );
+};
 
 const getDesignTokens = (mode) => ({
   palette: {
     mode,
     ...(mode === "light"
       ? {
-          primary: { main: "#06b6d4" },
-          secondary: { main: "#2dd4bf" },
-          background: { default: "#cefcff", paper: "#ffffff" },
+          primary: { main: "#006d77" },
+          secondary: { main: "#00bfa5" },
+          background: { default: "#e0f7fa", paper: "#ffffff" },
           text: { primary: "#0F172A", secondary: "#475569" },
         }
       : {
@@ -29,10 +85,14 @@ const getDesignTokens = (mode) => ({
         }),
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    h1: { fontSize: "3.5rem", fontWeight: 700, letterSpacing: "-0.01562em" },
-    h2: { fontSize: "2.5rem", fontWeight: 600, letterSpacing: "-0.00833em" },
-    h3: { fontSize: "2rem", fontWeight: 600, letterSpacing: "0em" },
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    h1: { fontFamily: '"Outfit", sans-serif', fontSize: "3.5rem", fontWeight: 700, letterSpacing: "-0.01562em" },
+    h2: { fontFamily: '"Outfit", sans-serif', fontSize: "2.5rem", fontWeight: 600, letterSpacing: "-0.00833em" },
+    h3: { fontFamily: '"Outfit", sans-serif', fontSize: "2.0rem", fontWeight: 600, letterSpacing: "0em" },
+    h4: { fontFamily: '"Outfit", sans-serif', fontSize: "1.75rem", fontWeight: 600 },
+    h5: { fontFamily: '"Outfit", sans-serif', fontSize: "1.5rem", fontWeight: 600 },
+    h6: { fontFamily: '"Outfit", sans-serif', fontSize: "1.25rem", fontWeight: 600 },
+    button: { fontFamily: '"Outfit", sans-serif', fontWeight: 700 },
   },
   components: {
     MuiButton: {
@@ -49,7 +109,7 @@ const getDesignTokens = (mode) => ({
           boxShadow: "0 8px 20px rgba(0,0,0,0.12)",
           backgroundImage:
             mode === "light"
-              ? "linear-gradient(90deg, #00bcd4, #2dd4bf)"
+              ? "linear-gradient(90deg, #006d77, #00bfa5)"
               : "linear-gradient(90deg, #00bcd4, #ff9800)",
           "&:hover": {
             filter: "brightness(0.95)",
@@ -133,16 +193,29 @@ function App() {
             <Hero />
           </div>
           <div id="skills">
-            <Skills />
+            <LazyRender fallback={<SectionSkeleton />}>
+              <Skills />
+            </LazyRender>
+          </div>
+          <div id="experience">
+            <LazyRender fallback={<SectionSkeleton />}>
+              <Experience />
+            </LazyRender>
           </div>
           <div id="projects">
-            <Projects />
+            <LazyRender fallback={<SectionSkeleton />}>
+              <Projects />
+            </LazyRender>
           </div>
           <div id="certifications">
-            <Certifications />
+            <LazyRender fallback={<SectionSkeleton />}>
+              <Certifications />
+            </LazyRender>
           </div>
           <div id="contact">
-            <Contact />
+            <LazyRender fallback={<SectionSkeleton />}>
+              <Contact />
+            </LazyRender>
           </div>
         </Box>
       </Box>

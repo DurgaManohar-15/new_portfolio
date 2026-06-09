@@ -1,14 +1,13 @@
 import React from "react";
 import { Box, Drawer, IconButton, Tooltip, Divider } from "@mui/material";
-import {
-  Home,
-  Code,
-  BusinessCenter,
-  Star,
-  Mail,
-  Brightness4,
-  Brightness7,
-} from "@mui/icons-material";
+import Home from "@mui/icons-material/Home";
+import Code from "@mui/icons-material/Code";
+import Work from "@mui/icons-material/Work";
+import BusinessCenter from "@mui/icons-material/BusinessCenter";
+import Star from "@mui/icons-material/Star";
+import Mail from "@mui/icons-material/Mail";
+import Brightness4 from "@mui/icons-material/Brightness4";
+import Brightness7 from "@mui/icons-material/Brightness7";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
@@ -19,6 +18,7 @@ const drawerWidth = 96;
 const sections = [
   { id: "hero", text: "Home", icon: <Home /> },
   { id: "skills", text: "Skills", icon: <Code /> },
+  { id: "experience", text: "Experience", icon: <Work /> },
   { id: "projects", text: "Projects", icon: <BusinessCenter /> },
   { id: "certifications", text: "Certifications", icon: <Star /> },
   { id: "contact", text: "Contact", icon: <Mail /> },

@@ -196,11 +196,12 @@ const sortedCerts = certifications
 
 const Certifications = () => {
   return (
-    <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 }, my: 4 }}>
+    <Paper elevation={0} sx={{ p: { xs: 2, sm: 4 }, my: 4, background: "transparent", border: "none" }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2, ease: "easeOut" }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
       >
         <Typography variant="h2" component="h2" gutterBottom align="center">
           Certifications
